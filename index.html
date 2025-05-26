@@ -1,87 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>오의진의 포트폴리오</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <style>
-    section { display: none; }
-    section.active { display: block; }
-  </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const links = document.querySelectorAll('nav a');
-      const sections = document.querySelectorAll('main section');
-
-      function showSection(id) {
-        sections.forEach(sec => sec.classList.remove('active'));
-        const target = document.querySelector(id);
-        if (target) target.classList.add('active');
-      }
-
-      links.forEach(link => {
-        link.addEventListener('click', function (e) {
-          e.preventDefault();
-          const id = this.getAttribute('href');
-          showSection(id);
-        });
-      });
-
-      showSection('#home');
-    });
-  </script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>오의진의 포트폴리오</h1>
     <nav>
-      <ul class="nav-links">
-        <li><a href="#home">HOME</a></li>
-        <li><a href="#about">ABOUT ME</a></li>
-        <li><a href="#skills">SKILLS</a></li>
-        <li><a href="#resume">RESUME</a></li>
-        <li><a href="#contact">CONTACT</a></li>
-      </ul>
+      <a href="index.html">홈</a>
+      <a href="about.html">자기소개</a>
+      <a href="projects.html">프로젝트</a>
+      <a href="contact.html">연락처</a>
+      <a href="study.html">학습 자료실</a>
     </nav>
   </header>
   <main>
-    <section id="Home">
-      <h2>안녕하세요</h2>
-      <p>저는 군산대학교 컴퓨터정보공학과에 재학 중인 오의진입니다.<br>
-      사용자에게 가치를 전달하는 개발자가 되기 위해 공부하고 있으며,<br>
-      이 포트폴리오는 저의 여정을 담은 공간입니다.</p>
-    </section>
-
-    <section id="about">
-      <h2>ABOUT ME</h2>
-      <p>성실함과 창의력을 바탕으로 성장하고 있는 웹 개발자 지망생입니다.<br>
-      프론트엔드 개발뿐만 아니라 UI/UX 설계에도 흥미를 가지고 있으며,<br>
-      사용자가 직관적으로 사용할 수 있는 웹사이트를 만드는 것을 목표로 하고 있습니다.<br>
-      현재는 HTML, CSS를 중심으로 실습하고 있으며 JavaScript 학습도 병행하고 있습니다.</p>
-    </section>
-
-    <section id="resume">
-      <h2>RESUME</h2>
-      <p><strong>이름:</strong> 오의진</p>
-      <p><strong>이메일:</strong> ouj224@naver.com</p>
-      <p><strong>학력:</strong> 군산대학교 컴퓨터정보공학과 (2021년 입학)</p>
-      <p><strong>기술 스택:</strong> HTML, CSS, JavaScript, Git</p>
-      <p><strong>자기소개:</strong><br>
-      안녕하세요. 군산대학교 컴퓨터정보공학과에 재학중인 3학년 오의진입니다.<br>
-      아직 부족한 점이 많아 배울 것이 많지만, 열심히 공부해서 뛰어난 개발자가 될 수 있도록 노력중입니다다.<br>
-    </section>
-
-    <section id="연락처처">
-      <h2>CONTACT</h2>
-      <p>개인적인 연락은 아래 이메일 또는 주소로 문의해주세요</p>
-      <p><a href="mailto:ouj224@naver.com"><i class="fas fa-envelope"></i> ouj224@naver.com</a></p>
-      <p><a href="https://github.com/ouj224" target="_blank"><i class="fab fa-github"></i> github.com/yourusername</a></p>
+    <section>
+      <h2>환영합니다!</h2>
+      <p>이곳은 학습과 성장 기록을 담은 오의진의 웹 포트폴리오입니다.<br>
+      다양한 프로젝트, 자기소개, 학습 영상 등을 확인할 수 있습니다.</p>
     </section>
   </main>
+</p>
+<p>
+  <div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://portfolio-imudjyaqco.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</p>
   <footer>
-    <p>© KSNU 2100982 오의진</p>
+    <p>© 2025 오의진</p>
   </footer>
 </body>
 </html>

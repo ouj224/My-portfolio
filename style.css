@@ -3,64 +3,37 @@ body {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  color: #333333;
+  color: #333;
 }
-
 header {
   background-color: #f8f8f8;
-  padding: 20px 0;
+  padding: 20px;
   text-align: center;
-  position: fixed;
-  width: 100%;
+  position: sticky;
   top: 0;
-  z-index: 1000;
 }
-
-.nav-links {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.nav-links a {
-  color: #333333;
+nav a {
+  margin: 0 15px;
   text-decoration: none;
   font-weight: bold;
-  padding: 8px 12px;
-  transition: background-color 0.3s ease;
+  color: #333;
 }
-
-.nav-links a:hover {
-  background-color: #e0e0e0;
-  border-radius: 5px;
+nav a:hover {
+  color: #007acc;
 }
-
 main {
-  padding: 160px 20px 40px;
-}
-
-section {
-  margin-bottom: 60px;
+  padding: 40px 20px;
   text-align: center;
 }
-
+iframe {
+  margin: 20px auto;
+  display: block;
+  max-width: 100%;
+  box-shadow: 0 0 10px #ccc;
+}
 footer {
-  background-color: #f8f8f8;
+  background-color: #f0f0f0;
   text-align: center;
   padding: 20px;
   margin-top: 50px;
-}
-
-footer a {
-  color: #333333;
-  text-decoration: none;
-  margin: 0 10px;
-}
-
-footer a:hover {
-  text-decoration: underline;
 }
