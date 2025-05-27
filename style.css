@@ -2,11 +2,11 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #e6f7ff;
+  background-color: #ffffff;
   color: #333;
 }
 header {
-  background-color: #e6f7ff;
+  background-color: #ffffff;
   padding: 20px;
   text-align: center;
   position: sticky;
@@ -32,7 +32,7 @@ iframe {
   box-shadow: 0 0 10px #ccc;
 }
 footer {
-  background-color: #e6f7ff;
+  background-color: #ffffff;
   text-align: center;
   padding: 20px;
   margin-top: 50px;
