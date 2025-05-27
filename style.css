@@ -50,3 +50,12 @@ section h2 {
   margin-bottom: 20px;
 }
 
+header h1 {
+  background-color: #000;
+  color: #fff;
+  padding: 20px 0;
+  margin: 0;
+  font-size: 2em;
+  text-align: center;
+  width: 100%;
+}
