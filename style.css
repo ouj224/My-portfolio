@@ -37,3 +37,16 @@ footer {
   padding: 20px;
   margin-top: 50px;
 }
+
+section h2 {
+  border: 2px solid #000;
+  padding: 12px 20px;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 1.4em;
+  background-color: #fff;
+  color: #000;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
