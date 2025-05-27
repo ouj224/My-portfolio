@@ -6,7 +6,7 @@ body {
   color: #333;
 }
 header {
-  background-color: #f8f8f8;
+  background-color: #e6f7ff;
   padding: 20px;
   text-align: center;
   position: sticky;
@@ -32,7 +32,7 @@ iframe {
   box-shadow: 0 0 10px #ccc;
 }
 footer {
-  background-color: #f0f0f0;
+  background-color: #e6f7ff;
   text-align: center;
   padding: 20px;
   margin-top: 50px;
