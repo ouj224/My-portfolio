@@ -103,9 +103,7 @@ nav ul li ul {
   z-index: 1001;
 }
 
-nav ul li:hover ul {
-  display: block;
-}
+
 
 nav ul li ul li {
   display: block;
@@ -156,4 +154,8 @@ main.with-sidebar {
 
 .sidebar ul li ul li {
   margin-bottom: 12px;
+}
+
+nav ul li:hover ul {
+  display: block;
 }
