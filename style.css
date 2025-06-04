@@ -199,3 +199,13 @@ body.home-bg {
   background: url('bg.jpg') no-repeat center center fixed;
   background-size: cover;
 }
+
+.youtube-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.youtube-list iframe {
+  margin-bottom: 40px;
+}
+
