@@ -104,7 +104,6 @@ nav ul li ul {
 }
 
 
-
 nav ul li ul li {
   display: block;
 }
@@ -114,8 +113,8 @@ nav ul li ul li a {
 }
 
 .sidebar {
-  float: left;
-  width: 200px;
+  width: 220px;
+  min-width: 180px;
   padding: 20px;
   background-color: #f3f3f3;
   border-right: 1px solid #ccc;
@@ -142,9 +141,12 @@ nav ul li ul li a {
 }
 
 main.with-sidebar {
-  margin-left: 0px;
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;       /* 사이드바와 본문(사진자리) 간격 */
+  padding: 40px 20px;
+  box-sizing: border-box;
 }
-
 
 .sidebar ul li strong {
   display: block;
@@ -158,4 +160,42 @@ main.with-sidebar {
 
 nav ul li:hover ul {
   display: block;
+}
+
+.about-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;       /* 사진자리와 텍스트 간격 */
+}
+
+.photo-box {
+  min-width: 300px;
+  min-height: 340px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px #ccc;
+  background: #f6f6f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.1em;
+}
+
+.about-info {
+  flex: 1;
+  min-width: 240px;
+  font-size: 1.15em;
+  text-align: left;
+}
+
+/* 반응형 대응 예시 (선택) */
+@media (max-width: 900px) {
+  main.with-sidebar, .about-section { flex-direction: column; gap: 20px; }
+  .sidebar { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid #ccc; }
+  .photo-box { margin-bottom: 20px; }
+}
+
+body.home-bg {
+  background: url('bg.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
