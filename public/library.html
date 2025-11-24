@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>LIBRARY</title>
+  <link href="style.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="logo"><a href="index.html">PORTFOLIO</a></div>
+      <nav>
+        <ul>
+          <li><a href="about.html">ABOUT</a></li>
+          <li><a href="skills.html">SKILLS</a></li>
+          <li><a href="project.html">PROJECT</a></li>
+          <li><a href="resume.html">RESUME</a></li>
+          <li><a href="library.html">LIBRARY</a></li>
+          <li><a href="contact.html">CONTACT</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="sub-banner">
+    <h2>LIBRARY</h2>
+  </div>
+
+  <div class="container">
+    <!-- 스크롤 이동을 위한 ID 부여 -->
+    <div class="content-header" id="lib-top">
+      <h3>학습 자료실</h3>
+      <p style="color:#666; font-size:0.9rem; margin-top:5px;">
+        공부한 내용을 기록하고 저장하는 공간입니다. (마우스를 올리면 수정/삭제 버튼이 나타납니다)
+      </p>
+    </div>
+    
+    <!-- 1. 게시글 목록 영역 (상단 배치) -->
+    <div id="library-list" style="display: flex; flex-direction: column; gap: 20px;"></div>
+
+    <hr style="margin: 40px 0; border:0; border-top:1px solid #eee;">
+
+    <!-- 2. 학습 내용 작성 영역 (하단 배치) -->
+    <div class="upload-box" id="form-area">
+      <h4 id="form-title"><i class="fas fa-edit"></i> 학습 내용 기록하기</h4>
+      <div class="input-group">
+        <label for="lib-title">주제 (Title)</label>
+        <input type="text" id="lib-title" placeholder="주제 입력">
+      </div>
+      <div class="input-group">
+        <label for="lib-content">내용 (Content)</label>
+        <textarea id="lib-content" rows="5" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" placeholder="내용 입력"></textarea>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="handleLibSubmit()" id="btn-submit" class="btn-upload">기록 저장</button>
+        <button onclick="resetLibForm()" id="btn-cancel" class="btn-upload" style="background-color: #666; display: none;">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">PORTFOLIO</div>
+      <div class="footer-info"><p>Copyright © 2025 All Rights Reserved.</p></div>
+    </div>
+  </footer>
+
+  <script>
+    let libList = [
+      { id: 101, date: '2025.11.24', title: 'JavaScript 심화 과정 수료', content: 'ES6+ 문법 정리 및 비동기 처리 학습' },
+      { id: 102, date: '2025.11.20', title: '정보처리기사 필기 오답노트', content: '디자인 패턴 및 DB 정규화 복습' }
+    ];
+    let nextLibId = 103;
+    let isEditing = false;
+    let editingId = null;
+
+    window.onload = function() { renderLibrary(); }
+
+    function renderLibrary() {
+      const container = document.getElementById('library-list');
+      container.innerHTML = '';
+      libList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'lib-card';
+        card.innerHTML = `
+          <div class="lib-actions">
+            <span class="action-btn" onclick="startEdit(${item.id})"><i class="fas fa-pen"></i></span>
+            <span class="action-btn delete" onclick="deletePost(${item.id})"><i class="fas fa-trash"></i></span>
+          </div>
+          <div class="lib-date">${item.date}</div>
+          <h4 class="lib-title">${item.title}</h4>
+          <p class="lib-text">${item.content}</p>
+        `;
+        container.prepend(card);
+      });
+    }
+
+    function handleLibSubmit() {
+      const title = document.getElementById('lib-title').value;
+      const content = document.getElementById('lib-content').value;
+      if (!title) { alert("주제를 입력하세요."); return; }
+
+      if (isEditing) {
+        // 수정
+        const target = libList.find(i => i.id === editingId);
+        target.title = title; target.content = content;
+        alert("수정되었습니다.");
+        resetLibForm(); // 수정 완료 후 목록으로 이동
+      } else {
+        // 등록
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+        libList.push({ id: nextLibId++, date: dateStr, title: title, content: content });
+        
+        // 등록 완료 후 입력창만 초기화
+        document.getElementById('lib-title').value = '';
+        document.getElementById('lib-content').value = '';
+        renderLibrary();
+      }
+    }
+
+    function startEdit(id) {
+      const target = libList.find(i => i.id === id);
+      if (!target) return;
+      isEditing = true; 
+      editingId = id;
+      
+      document.getElementById('lib-title').value = target.title;
+      document.getElementById('lib-content').value = target.content;
+      
+      // [수정] 제목 변경: 기록 수정하기
+      document.getElementById('form-title').innerHTML = `<i class="fas fa-edit"></i> 기록 수정하기`;
+      document.getElementById('btn-submit').innerText = "수정 완료";
+      document.getElementById('btn-cancel').style.display = "inline-block";
+      
+      document.getElementById('form-area').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deletePost(id) { if(confirm("삭제?")) { libList = libList.filter(i=>i.id!==id); renderLibrary(); } }
+    
+    function resetLibForm() {
+      isEditing = false; 
+      editingId = null;
+      document.getElementById('lib-title').value=''; 
+      document.getElementById('lib-content').value='';
+      
+      // [수정] 제목 원상복구 및 목록으로 이동
+      document.getElementById('form-title').innerHTML = `<i class="fas fa-edit"></i> 학습 내용 기록하기`;
+      document.getElementById('btn-submit').innerText = "기록 저장"; 
+      document.getElementById('btn-cancel').style.display = "none";
+
+      // 취소 시 목록 상단으로 스크롤 이동
+      document.getElementById('lib-top').scrollIntoView({ behavior: 'smooth' });
+      renderLibrary();
+    }
+  </script>
+  <!-- 챗봇 스크립트 연결 -->
+  <script src="chatbot.js"></script>
+</body>
+</html>
