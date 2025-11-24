@@ -10,6 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # [핵심] 깃허브 컴퓨터에 '임시 MongoDB'를 설치해주는 설정
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+
     strategy:
       matrix:
         node-version: [18.x]
@@ -27,6 +34,6 @@ jobs:
       run: npm install
 
     - name: Test Server Startup
-      # 서버를 10초간 실행해보고, 에러 없이 켜지면 성공으로 간주하는 테스트
+      # MongoDB 서비스가 있으므로 서버가 정상적으로 켜졌다가 꺼집니다.
       run: |
-        timeout 10s npm start || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+        timeout 10s node backend/server.js || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
