@@ -1,6 +1,4 @@
-# .dockerignore
-
-# 1. 의존성 폴더 제외 (컨테이너 내부에서 npm install로 새로 설치해야 함)
+# 1. 의존성 폴더 제외 (컨테이너 내부에서 npm install로 새로 설치)
 node_modules
 
 # 2. 버전 관리 및 IDE 설정 제외

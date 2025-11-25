@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # 1. 백엔드 서버 컨테이너
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      # 도커 내부에서는 'localhost' 대신 서비스 이름('mysql_db')을 씁니다.
+      - DB_HOST=mysql_db
+      - DB_USER=root
+      - DB_PASS=1234
+    depends_on:
+      - mysql_db
+
+  # 2. MySQL 데이터베이스 컨테이너
+  mysql_db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: portfolioDB
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql # 데이터가 사라지지 않게 저장
+
+volumes:
+  mysql_data:
