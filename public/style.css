@@ -305,12 +305,12 @@ nav ul li ul li a:hover {
   color: #999;
 }
 
-/* --- [수정됨] 컨텐츠 박스 스타일 통일 (Skill, Resume, Contact) --- */
+/* --- 컨텐츠 박스 스타일 통일 (Skill, Resume, Contact) --- */
 .skill-box, 
 .resume-box, 
 .contact-section {
   background: #fff;
-  padding: 40px; /* 다른 페이지와 여백 통일 */
+  padding: 40px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   border: 1px solid #eee;
@@ -320,7 +320,7 @@ nav ul li ul li a:hover {
 /* --- 프로젝트/자료실 입력 폼 스타일 --- */
 .upload-box {
   background-color: #fff;
-  padding: 40px; /* 통일 */
+  padding: 40px;
   border: 1px solid #ddd;
   border-radius: 8px;
   margin-bottom: 40px;
@@ -572,75 +572,6 @@ footer {
   border-color: #d9534f; 
 }
 
-/* --- 챗봇 스타일 --- */
-#chatbot-btn {
-  position: fixed; bottom: 30px; right: 30px;
-  width: 60px; height: 60px;
-  background-color: #004098; color: white;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 30px; cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 9999;
-  transition: transform 0.3s;
-}
-#chatbot-btn:hover { transform: scale(1.1); }
-
-#chat-container {
-  display: none;
-  position: fixed; bottom: 100px; right: 30px;
-  width: 350px; height: 500px;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-  z-index: 9999;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #ddd;
-}
-#chat-header {
-  background-color: #004098; color: white; padding: 15px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-#chat-messages {
-  flex: 1; padding: 15px; overflow-y: auto;
-  background-color: #f9f9f9; display: flex; flex-direction: column; gap: 10px;
-}
-.message {
-  max-width: 80%; padding: 10px; border-radius: 10px; font-size: 0.9rem;
-  line-height: 1.4; word-break: break-word;
-}
-.user-msg {
-  align-self: flex-end; background-color: #004098; color: white;
-  border-bottom-right-radius: 0;
-}
-.bot-msg {
-  align-self: flex-start; background-color: #e9ecef; color: #333;
-  border-bottom-left-radius: 0;
-}
-.bot-msg.loading {
-  color: #888;
-  font-style: italic;
-  animation: blink 1.5s infinite;
-}
-@keyframes blink {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-
-#chat-input-area {
-  padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px;
-  background: white;
-}
-#chat-input {
-  flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;
-}
-#send-btn {
-  background: #004098; color: white; border: none; padding: 0 15px;
-  border-radius: 20px; cursor: pointer;
-}
-
 /* --- 반응형 (Mobile) --- */
 @media (max-width: 768px) {
   .header-container { flex-direction: column; height: auto; padding: 20px; }
@@ -651,6 +582,4 @@ footer {
   .project-grid { grid-template-columns: 1fr; }
   .with-sidebar { flex-direction: column; }
   .sidebar { width: 100%; margin-bottom: 20px; }
-  
-  #chat-container { width: 90%; right: 5%; bottom: 100px; height: 60vh; }
 }

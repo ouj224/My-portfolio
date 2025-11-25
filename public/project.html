@@ -28,7 +28,6 @@
   </div>
 
   <div class="container">
-    <!-- 스크롤 이동을 위한 ID 부여 -->
     <div class="content-header" id="list-top">
       <h3>프로젝트 갤러리</h3>
       <p style="color:#666; font-size:0.9rem; margin-top:5px;">
@@ -36,15 +35,13 @@
       </p>
     </div>
     
-    <!-- 1. 프로젝트 목록 (상단 배치) -->
     <div id="project-grid" class="project-grid"></div>
 
     <hr style="margin: 40px 0; border:0; border-top:1px solid #eee;">
 
-    <!-- 2. 프로젝트 등록/수정 입력 폼 (하단 배치) -->
     <div class="upload-box" id="form-area">
       <h4 id="form-title"><i class="fas fa-pen"></i> 프로젝트 등록하기</h4>
-      <input type="hidden" id="edit-id"> <!-- 수정 시 ID 저장용 -->
+      <input type="hidden" id="edit-id">
       
       <div class="input-group">
         <label for="p-image">파일 업로드 (이미지, PDF 등)</label>
@@ -67,7 +64,6 @@
     </div>
   </div>
 
-  <!-- 상세 보기 모달 -->
   <div id="project-modal" class="modal-overlay">
     <div class="modal-content">
       <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -106,7 +102,6 @@
     function renderProjects() {
       const grid = document.getElementById('project-grid');
       grid.innerHTML = '';
-      // 최신순 정렬을 위해 역순으로 추가하거나 prepend 사용
       projectList.forEach(data => createCardDOM(data, grid));
     }
 
@@ -145,10 +140,7 @@
           <span style="font-size:0.8rem; color:#888; display:block; margin-top:5px;">${data.file ? '(첨부파일)' : '(상세보기)'}</span>
         </div>
       `;
-      // 카드 클릭 시 모달 열기
       card.onclick = () => openModal(data.title, data.desc, modalIconHtml, fileUrl, data.file ? data.file.name : '');
-      
-      // 최신순으로 위에 쌓이도록 prepend 사용
       parent.prepend(card);
     }
 
@@ -159,25 +151,12 @@
       if (!title) { alert("제목을 입력하세요."); return; }
 
       if (editMode) {
-        // 수정 모드
         const target = projectList.find(p => p.id === currentEditId);
-        if (target) { 
-          target.title = title; 
-          target.desc = desc; 
-          if(fileInput.files.length) target.file = fileInput.files[0]; 
-        }
+        if (target) { target.title = title; target.desc = desc; if(fileInput.files.length) target.file = fileInput.files[0]; }
         alert("수정되었습니다.");
-        resetForm(); // 수정 후 목록으로 이동
+        resetForm(); 
       } else {
-        // 등록 모드
-        projectList.push({ 
-          id: nextId++, 
-          title: title, 
-          desc: desc, 
-          type: 'custom',
-          file: fileInput.files[0] 
-        });
-        // 등록 후 입력창만 초기화하고 목록 갱신 (스크롤 이동 안함)
+        projectList.push({ id: nextId++, title: title, desc: desc, file: fileInput.files[0] });
         document.getElementById('p-title').value = '';
         document.getElementById('p-desc').value = '';
         document.getElementById('p-image').value = '';
@@ -188,14 +167,12 @@
     function startEdit(id) {
       const target = projectList.find(p => p.id === id);
       if (!target) return;
-      editMode = true; 
-      currentEditId = id;
+      editMode = true; currentEditId = id;
       
       document.getElementById('p-title').value = target.title;
       document.getElementById('p-desc').value = target.desc;
       document.getElementById('file-info').innerText = "* 파일을 새로 업로드하면 기존 파일이 교체됩니다.";
       
-      // [수정] 제목 변경: 프로젝트 수정하기
       document.getElementById('form-title').innerHTML = `<i class="fas fa-edit"></i> 프로젝트 수정하기`;
       document.getElementById('btn-submit').innerText = "수정 완료";
       document.getElementById('btn-cancel').style.display = "inline-block";
@@ -218,12 +195,10 @@
       document.getElementById('p-image').value='';
       document.getElementById('file-info').innerText = "* 업로드한 파일은 상세화면에서 다운로드할 수 있습니다.";
       
-      // [수정] 제목 원상복구 및 목록으로 이동
       document.getElementById('form-title').innerHTML = `<i class="fas fa-pen"></i> 프로젝트 등록하기`;
       document.getElementById('btn-submit').innerText = "등록"; 
       document.getElementById('btn-cancel').style.display = "none";
 
-      // 취소 시 목록 상단으로 스크롤 이동
       document.getElementById('list-top').scrollIntoView({ behavior: 'smooth' });
       renderProjects();
     }
@@ -235,9 +210,7 @@
       
       const db = document.getElementById('modal-download');
       if(f && f !== '#'){ 
-        db.href=f; 
-        db.download=fn; 
-        db.style.display='inline-block'; 
+        db.href=f; db.download=fn; db.style.display='inline-block'; 
         document.getElementById('modal-no-file').style.display='none';
       } else { 
         db.style.display='none'; 
@@ -247,13 +220,7 @@
     }
 
     function closeModal() { document.getElementById('project-modal').classList.remove('open'); }
-    
-    window.onclick = function(e) { 
-      if(e.target == document.getElementById('project-modal')) closeModal(); 
-    }
+    window.onclick = function(e) { if(e.target==document.getElementById('project-modal')) closeModal(); }
   </script>
-  
-  <!-- 챗봇 스크립트 연결 -->
-  <script src="chatbot.js"></script>
 </body>
 </html>
