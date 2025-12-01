@@ -9,15 +9,15 @@
 <body>
   <header>
     <div class="header-container">
-      <div class="logo"><a href="index.html">PORTFOLIO</a></div>
+      <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
           <li><a href="about.html">ABOUT</a></li>
-          <li><a href="skills.html">SKILLS</a></li>
-          <li><a href="project.html">PROJECT</a></li>
           <li><a href="resume.html">RESUME</a></li>
-          <li><a href="library.html">LIBRARY</a></li>
+          <li><a href="project.html">PROJECT</a></li>
+          <li><a href="library.html" class="active">LIBRARY</a></li>
           <li><a href="contact.html">CONTACT</a></li>
+          <li><a href="board.html">BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -31,7 +31,7 @@
     <div class="content-header" id="lib-top">
       <h3>학습 자료실</h3>
       <p style="color:#666; font-size:0.9rem; margin-top:5px;">
-        공부한 내용을 기록하고 저장하는 공간입니다. (마우스를 올리면 수정/삭제 버튼이 나타납니다)
+        공부한 내용을 기록하고 저장하는 공간입니다.
       </p>
     </div>
     
@@ -58,7 +58,6 @@
 
   <footer>
     <div class="footer-content">
-      <div class="footer-logo">PORTFOLIO</div>
       <div class="footer-info"><p>Copyright © 2025 All Rights Reserved.</p></div>
     </div>
   </footer>
@@ -79,12 +78,14 @@
       container.innerHTML = '';
       libList.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'lib-card';
+        card.className = 'lib-card'; // CSS에서 border 및 relative 설정됨
+        
         card.innerHTML = `
           <div class="lib-actions">
             <span class="action-btn" onclick="startEdit(${item.id})"><i class="fas fa-pen"></i></span>
             <span class="action-btn delete" onclick="deletePost(${item.id})"><i class="fas fa-trash"></i></span>
           </div>
+          
           <div class="lib-date">${item.date}</div>
           <h4 class="lib-title">${item.title}</h4>
           <p class="lib-text">${item.content}</p>
@@ -142,5 +143,6 @@
       renderLibrary();
     }
   </script>
+<script src="script.js"></script>
 </body>
 </html>

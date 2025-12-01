@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 3000
 
 # 6. 서버 실행 명령어
-CMD [ "npm", "start" ]
+CMD [ "node", "backend/server.js" ]

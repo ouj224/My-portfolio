@@ -9,15 +9,15 @@
 <body>
   <header>
     <div class="header-container">
-      <div class="logo"><a href="index.html">PORTFOLIO</a></div>
+      <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
           <li><a href="about.html">ABOUT</a></li>
-          <li><a href="skills.html">SKILLS</a></li>
-          <li><a href="project.html">PROJECT</a></li>
           <li><a href="resume.html">RESUME</a></li>
+          <li><a href="project.html" class="active">PROJECT</a></li>
           <li><a href="library.html">LIBRARY</a></li>
           <li><a href="contact.html">CONTACT</a></li>
+          <li><a href="board.html">BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -31,7 +31,7 @@
     <div class="content-header" id="list-top">
       <h3>프로젝트 갤러리</h3>
       <p style="color:#666; font-size:0.9rem; margin-top:5px;">
-        진행한 프로젝트의 결과물을 등록하고 확인하세요. (카드에 마우스를 올리면 수정/삭제 가능)
+        진행한 프로젝트의 결과물을 등록하고 확인하세요.
       </p>
     </div>
     
@@ -71,7 +71,7 @@
         <div id="modal-img-area" style="margin-bottom: 20px; height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f8f8; border-radius: 8px;"></div>
         <h3 id="modal-title" style="color: #004098; font-size: 1.5rem; margin-bottom: 10px;">제목</h3>
         <p id="modal-desc" style="color: #555; line-height: 1.6;">설명</p>
-        <a id="modal-download" href="#" class="modal-download-btn" download><i class="fas fa-download"></i> 다운로드</a>
+        <a id="modal-download" href="#" class="btn-upload" style="display:inline-block; margin-top:15px; text-decoration:none;" download><i class="fas fa-download"></i> 다운로드</a>
         <p id="modal-no-file" style="display:none; color:#999; margin-top:20px;">첨부된 파일이 없습니다.</p>
       </div>
     </div>
@@ -79,10 +79,7 @@
 
   <footer>
     <div class="footer-content">
-      <div class="footer-logo">PORTFOLIO</div>
-      <div class="footer-info">
-        <p>Copyright © 2025 All Rights Reserved.</p>
-      </div>
+      <div class="footer-info"><p>Copyright © 2025 All Rights Reserved.</p></div>
     </div>
   </footer>
 
@@ -128,16 +125,18 @@
         fileUrl = null;
       }
 
+      // 카드 구조 수정: 이미지 -> 버튼 영역 -> 내용 영역
       card.innerHTML = `
-        <div class="card-actions">
-          <div class="action-btn" onclick="startEdit(${data.id}); event.stopPropagation();"><i class="fas fa-pen"></i></div>
-          <div class="action-btn" onclick="deleteProject(${data.id}); event.stopPropagation();"><i class="fas fa-trash"></i></div>
-        </div>
         <div class="img-wrapper">${displayContent}</div>
+        
+        <div class="card-actions">
+          <div class="action-btn" onclick="startEdit(${data.id}); event.stopPropagation();" title="수정"><i class="fas fa-pen"></i></div>
+          <div class="action-btn delete" onclick="deleteProject(${data.id}); event.stopPropagation();" title="삭제"><i class="fas fa-trash"></i></div>
+        </div>
+
         <div class="card-body">
           <h5>${data.title}</h5>
           <p class="card-desc-preview" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.desc}</p>
-          <span style="font-size:0.8rem; color:#888; display:block; margin-top:5px;">${data.file ? '(첨부파일)' : '(상세보기)'}</span>
         </div>
       `;
       card.onclick = () => openModal(data.title, data.desc, modalIconHtml, fileUrl, data.file ? data.file.name : '');
@@ -222,5 +221,6 @@
     function closeModal() { document.getElementById('project-modal').classList.remove('open'); }
     window.onclick = function(e) { if(e.target==document.getElementById('project-modal')) closeModal(); }
   </script>
+<script src="script.js"></script>
 </body>
 </html>

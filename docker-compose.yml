@@ -7,7 +7,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # 도커 내부에서는 'localhost' 대신 서비스 이름('mysql_db')을 씁니다.
       - DB_HOST=mysql_db
       - DB_USER=root
       - DB_PASS=1234

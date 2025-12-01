@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>회원가입</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2 style="color:#004098;">회원가입</h2>
+            <form id="regForm">
+                <input type="text" id="username" class="auth-input" placeholder="아이디" required>
+                <input type="password" id="password" class="auth-input" placeholder="비밀번호" required>
+                <input type="text" id="name" class="auth-input" placeholder="이름 (닉네임)" required>
+                <button type="submit" class="auth-btn">가입하기</button>
+            </form>
+            <a href="login.html" class="auth-link">이미 계정이 있으신가요? 로그인</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('regForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    name: document.getElementById('name').value
+                })
+            });
+            if (res.ok) { alert('가입 성공! 로그인해주세요.'); window.location.href = 'login.html'; }
+            else alert('가입 실패');
+        };
+    </script>
+<script src="script.js"></script>
+</body>
+</html>

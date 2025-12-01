@@ -9,15 +9,15 @@
 <body>
   <header>
     <div class="header-container">
-      <div class="logo"><a href="index.html">PORTFOLIO</a></div>
+      <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
           <li><a href="about.html">ABOUT</a></li>
-          <li><a href="skills.html">SKILLS</a></li>
+          <li><a href="resume.html" class="active">RESUME</a></li>
           <li><a href="project.html">PROJECT</a></li>
-          <li><a href="resume.html">RESUME</a></li>
           <li><a href="library.html">LIBRARY</a></li>
           <li><a href="contact.html">CONTACT</a></li>
+          <li><a href="board.html">BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -29,25 +29,37 @@
 
   <div class="container">
     <div class="content-header">
-      <h3>이력서</h3>
+      <h3>이력서 & 기술 기술서</h3>
+      <p style="color:#666;">보유 기술 스택과 경력 사항을 상세히 기술하세요.</p>
     </div>
     
-    <div class="resume-box">
-      <div style="text-align: center; padding: 60px 0;">
-        <i class="fas fa-file-alt" style="font-size: 4rem; color: #ddd; margin-bottom: 20px;"></i>
-        <p style="font-size: 1.2rem; color: #666;">현재 등록된 이력서 상세 내용이 없습니다.</p>
-        <p style="color: #999;">추후 업데이트 예정입니다.</p>
-      </div>
+    <textarea id="resumeContent" class="resume-editor" placeholder="[보유 기술]&#13;&#10;- Language: JavaScript, Python&#13;&#10;- Frontend: HTML, CSS, React&#13;&#10;- Backend: Node.js, Express, MongoDB&#13;&#10;&#13;&#10;[경력 사항]&#13;&#10;..."></textarea>
+    
+    <div style="text-align: right; margin-top: 20px;">
+        <button onclick="saveResume()" class="btn-upload">이력서 저장하기</button>
     </div>
   </div>
 
   <footer>
-    <div class="footer-content">
-      <div class="footer-logo">PORTFOLIO</div>
-      <div class="footer-info">
-        <p>Copyright © 2025 All Rights Reserved.</p>
-      </div>
-    </div>
+    <div class="footer-content"><p>Copyright © 2025 All Rights Reserved.</p></div>
   </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // 서버에서 이력서 데이터 가져오기
+    fetch('/api/resume').then(res => res.json()).then(data => {
+        document.getElementById('resumeContent').value = data.content || '';
+    });
+
+    function saveResume() {
+        const content = document.getElementById('resumeContent').value;
+        fetch('/api/resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        }).then(() => alert('이력서가 저장되었습니다.'));
+    }
+  </script>
+<script src="script.js"></script>
 </body>
 </html>

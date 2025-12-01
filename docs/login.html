@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>로그인 - 포트폴리오</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2 style="color:#004098; margin-bottom:20px;">PORTFOLIO LOGIN</h2>
+            <form id="loginForm">
+                <input type="text" id="username" class="auth-input" placeholder="아이디" required>
+                <input type="password" id="password" class="auth-input" placeholder="비밀번호" required>
+                <button type="submit" class="auth-btn">로그인</button>
+            </form>
+            <a href="register.html" class="auth-link">계정이 없으신가요? 회원가입</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value
+                })
+            });
+            const data = await res.json();
+            if (res.ok) window.location.href = data.redirect;
+            else alert(data.message);
+        };
+    </script>
+<script src="script.js"></script>
+</body>
+</html>
