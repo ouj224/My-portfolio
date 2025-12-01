@@ -1,3 +1,15 @@
+# .gitignore 파일 내용
+
+# 1. 의존성 라이브러리 (용량 큼, 올리지 않음)
 node_modules/
-.env
+
+# 2. 맥/윈도우 시스템 파일
 .DS_Store
+Thumbs.db
+
+# 3. 환경변수 파일 (나중에 보안 키 관리할 때 씀)
+.env
+
+# 4. 로그 파일들
+*.log
+npm-debug.log*
