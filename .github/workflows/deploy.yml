@@ -1,4 +1,4 @@
-name: Node.js CI
+name: CI/CD Pipeline to Docker Hub
 
 on:
   push:
@@ -7,33 +7,45 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    # [핵심] 깃허브 컴퓨터에 '임시 MongoDB'를 설치해주는 설정
     services:
       mongodb:
         image: mongo:5.0
         ports:
           - 27017:27017
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js 18
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '18.x'
         cache: 'npm'
         
     - name: Install dependencies
       run: npm install
 
     - name: Test Server Startup
-      # MongoDB 서비스가 있으므로 서버가 정상적으로 켜졌다가 꺼집니다.
       run: |
         timeout 10s node backend/server.js || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+      env:
+        MONGO_HOST: localhost
+
+    # ★ 여기서 아까 등록한 열쇠(Secrets)를 사용합니다.
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # ★ 이미지를 만들고 Docker Hub로 보냅니다 (Push).
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/my-portfolio:latest
