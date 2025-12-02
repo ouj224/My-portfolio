@@ -12,12 +12,12 @@
       <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
-          <li><a href="about.html">ABOUT</a></li>
-          <li><a href="resume.html">RESUME</a></li>
-          <li><a href="project.html" class="active">PROJECT</a></li>
-          <li><a href="library.html">LIBRARY</a></li>
-          <li><a href="contact.html">CONTACT</a></li>
-          <li><a href="board.html">BOARD</a></li>
+          <li><a href="about.html"><img src="images/icon_about.png" alt="about" class="menu-icon"> ABOUT</a></li>
+          <li><a href="resume.html"><img src="images/icon_resume.png" alt="resume" class="menu-icon"> RESUME</a></li>
+          <li><a href="project.html" class="active"><img src="images/icon_project.png" alt="project" class="menu-icon"> PROJECT</a></li>
+          <li><a href="library.html"><img src="images/icon_library.png" alt="library" class="menu-icon"> LIBRARY</a></li>
+          <li><a href="contact.html"><img src="images/icon_contact.png" alt="contact" class="menu-icon"> CONTACT</a></li>
+          <li><a href="board.html"><img src="images/icon_board.png" alt="board" class="menu-icon"> BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -83,6 +83,7 @@
     </div>
   </footer>
 
+  <script src="script.js"></script>
   <script>
     let projectList = [
       { id: 1, title: "객체지향 포트폴리오", desc: "HTML/CSS/JS 포트폴리오 사이트", type: 'web', file: null },
@@ -105,7 +106,6 @@
     function createCardDOM(data, parent) {
       const card = document.createElement('div');
       card.className = 'project-card';
-      
       let displayContent = '', modalIconHtml = '', fileUrl = '#';
       if (data.file) {
         fileUrl = URL.createObjectURL(data.file);
@@ -124,16 +124,12 @@
         modalIconHtml = `<i class="fas ${icon}" style="font-size:5rem; color:#004098;"></i>`;
         fileUrl = null;
       }
-
-      // 카드 구조 수정: 이미지 -> 버튼 영역 -> 내용 영역
       card.innerHTML = `
         <div class="img-wrapper">${displayContent}</div>
-        
         <div class="card-actions">
           <div class="action-btn" onclick="startEdit(${data.id}); event.stopPropagation();" title="수정"><i class="fas fa-pen"></i></div>
           <div class="action-btn delete" onclick="deleteProject(${data.id}); event.stopPropagation();" title="삭제"><i class="fas fa-trash"></i></div>
         </div>
-
         <div class="card-body">
           <h5>${data.title}</h5>
           <p class="card-desc-preview" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.desc}</p>
@@ -148,7 +144,6 @@
       const desc = document.getElementById('p-desc').value;
       const fileInput = document.getElementById('p-image');
       if (!title) { alert("제목을 입력하세요."); return; }
-
       if (editMode) {
         const target = projectList.find(p => p.id === currentEditId);
         if (target) { target.title = title; target.desc = desc; if(fileInput.files.length) target.file = fileInput.files[0]; }
@@ -167,60 +162,34 @@
       const target = projectList.find(p => p.id === id);
       if (!target) return;
       editMode = true; currentEditId = id;
-      
       document.getElementById('p-title').value = target.title;
       document.getElementById('p-desc').value = target.desc;
       document.getElementById('file-info').innerText = "* 파일을 새로 업로드하면 기존 파일이 교체됩니다.";
-      
       document.getElementById('form-title').innerHTML = `<i class="fas fa-edit"></i> 프로젝트 수정하기`;
       document.getElementById('btn-submit').innerText = "수정 완료";
       document.getElementById('btn-cancel').style.display = "inline-block";
-      
       document.getElementById('form-area').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function deleteProject(id) { 
-      if(confirm("정말 삭제하시겠습니까?")) { 
-        projectList = projectList.filter(p => p.id !== id); 
-        renderProjects(); 
-      } 
-    }
-
+    function deleteProject(id) { if(confirm("정말 삭제하시겠습니까?")) { projectList = projectList.filter(p => p.id !== id); renderProjects(); } }
     function resetForm() {
-      editMode = false; 
-      currentEditId = null;
-      document.getElementById('p-title').value=''; 
-      document.getElementById('p-desc').value=''; 
-      document.getElementById('p-image').value='';
+      editMode = false; currentEditId = null;
+      document.getElementById('p-title').value=''; document.getElementById('p-desc').value=''; document.getElementById('p-image').value='';
       document.getElementById('file-info').innerText = "* 업로드한 파일은 상세화면에서 다운로드할 수 있습니다.";
-      
       document.getElementById('form-title').innerHTML = `<i class="fas fa-pen"></i> 프로젝트 등록하기`;
-      document.getElementById('btn-submit').innerText = "등록"; 
-      document.getElementById('btn-cancel').style.display = "none";
-
+      document.getElementById('btn-submit').innerText = "등록"; document.getElementById('btn-cancel').style.display = "none";
       document.getElementById('list-top').scrollIntoView({ behavior: 'smooth' });
       renderProjects();
     }
-
     function openModal(t,d,i,f,fn) {
-      document.getElementById('modal-title').innerText=t; 
-      document.getElementById('modal-desc').innerText=d; 
-      document.getElementById('modal-img-area').innerHTML=i;
-      
+      document.getElementById('modal-title').innerText=t; document.getElementById('modal-desc').innerText=d; document.getElementById('modal-img-area').innerHTML=i;
       const db = document.getElementById('modal-download');
-      if(f && f !== '#'){ 
-        db.href=f; db.download=fn; db.style.display='inline-block'; 
-        document.getElementById('modal-no-file').style.display='none';
-      } else { 
-        db.style.display='none'; 
-        document.getElementById('modal-no-file').style.display='block';
-      }
+      if(f && f !== '#'){ db.href=f; db.download=fn; db.style.display='inline-block'; document.getElementById('modal-no-file').style.display='none'; }
+      else { db.style.display='none'; document.getElementById('modal-no-file').style.display='block'; }
       document.getElementById('project-modal').classList.add('open');
     }
-
     function closeModal() { document.getElementById('project-modal').classList.remove('open'); }
     window.onclick = function(e) { if(e.target==document.getElementById('project-modal')) closeModal(); }
   </script>
-<script src="script.js"></script>
 </body>
 </html>

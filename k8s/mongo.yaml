@@ -27,3 +27,10 @@ spec:
         image: mongo:5.0
         ports:
         - containerPort: 27017
+        volumeMounts:          # [추가됨]
+        - name: mongo-storage
+          mountPath: /data/db
+      volumes:                 # [추가됨]
+      - name: mongo-storage
+        hostPath:
+          path: /run/desktop/mnt/host/c/k8s-data/mongo # C드라이브/k8s-data 폴더에 저장됨

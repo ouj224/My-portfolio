@@ -5,6 +5,14 @@
   <title>CONTACT</title>
   <link href="style.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .contact-icon-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -12,12 +20,12 @@
       <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
-          <li><a href="about.html">ABOUT</a></li>
-          <li><a href="resume.html">RESUME</a></li>
-          <li><a href="project.html">PROJECT</a></li>
-          <li><a href="library.html">LIBRARY</a></li>
-          <li><a href="contact.html" class="active">CONTACT</a></li>
-          <li><a href="board.html">BOARD</a></li>
+          <li><a href="about.html"><img src="images/icon_about.png" alt="about" class="menu-icon"> ABOUT</a></li>
+          <li><a href="resume.html"><img src="images/icon_resume.png" alt="resume" class="menu-icon"> RESUME</a></li>
+          <li><a href="project.html"><img src="images/icon_project.png" alt="project" class="menu-icon"> PROJECT</a></li>
+          <li><a href="library.html"><img src="images/icon_library.png" alt="library" class="menu-icon"> LIBRARY</a></li>
+          <li><a href="contact.html" class="active"><img src="images/icon_contact.png" alt="contact" class="menu-icon"> CONTACT</a></li>
+          <li><a href="board.html"><img src="images/icon_board.png" alt="board" class="menu-icon"> BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -30,44 +38,41 @@
   <div class="container">
     <div class="content-header">
       <h3>연락처 정보</h3>
+      <p style="color:#666;">언제든 편하게 연락주세요.</p>
     </div>
     
     <div class="contact-section">
-      <div style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; text-align: center; padding: 20px 0;">
-        
-        <div style="min-width: 250px;">
-          <i class="fas fa-envelope" style="font-size: 3rem; color: #004098; margin-bottom: 20px;"></i>
+      <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; text-align: center; padding: 40px 0;">
+        <div style="min-width: 200px;">
+          <img src="images/icon_mail.png" alt="Email" class="contact-icon-img">
           <h3>Email</h3>
-          <p style="font-size: 1.2rem; margin-top: 10px;">
-            <a href="mailto:test@test">test@test</a>
+          <p style="font-size: 1.1rem; margin-top: 10px;">
+            <a href="mailto:ouj224@naver.com">test@test.com</a>
           </p>
         </div>
-        
-        <div style="min-width: 250px;">
-          <i class="fas fa-phone" style="font-size: 3rem; color: #004098; margin-bottom: 20px;"></i>
+        <div style="min-width: 200px;">
+          <img src="images/icon_phone.png" alt="Phone" class="contact-icon-img">
           <h3>Phone</h3>
-          <p style="font-size: 1.2rem; margin-top: 10px;">010-1234-5678</p>
+          <p style="font-size: 1.1rem; margin-top: 10px;">010-1234-5678</p>
         </div>
-
-        <div style="min-width: 250px;">
-          <i class="fab fa-github" style="font-size: 3rem; color: #333; margin-bottom: 20px;"></i>
+        <div style="min-width: 200px;">
+          <img src="images/icon_github.png" alt="GitHub" class="contact-icon-img">
           <h3>GitHub</h3>
-          <p style="font-size: 1.2rem; margin-top: 10px;">
+          <p style="font-size: 1.1rem; margin-top: 10px;">
             <a href="https://github.com/ouj224" target="_blank">github.com/ouj224</a>
           </p>
         </div>
-
+        <div style="min-width: 200px;">
+          <img src="images/icon_discord.png" alt="Discord" class="contact-icon-img">
+          <h3>Discord</h3>
+          <p style="font-size: 1.1rem; margin-top: 10px;">user#1234</p>
+        </div>
       </div>
     </div>
   </div>
 
   <footer>
-    <div class="footer-content">
-      <div class="footer-logo">PORTFOLIO</div>
-      <div class="footer-info">
-        <p>Copyright © 2025 All Rights Reserved.</p>
-      </div>
-    </div>
+    <div class="footer-content"><p>Copyright © 2025 All Rights Reserved.</p></div>
   </footer>
 <script src="script.js"></script>
 </body>

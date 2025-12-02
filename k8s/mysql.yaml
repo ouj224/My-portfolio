@@ -32,3 +32,10 @@ spec:
           value: "portfolioDB"
         ports:
         - containerPort: 3306
+        volumeMounts:          # [추가됨] 컨테이너 내부의 저장소 경로
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:                 # [추가됨] 내 컴퓨터의 실제 저장소 연결
+      - name: mysql-storage
+        hostPath:
+          path: /run/desktop/mnt/host/c/k8s-data/mysql # C드라이브/k8s-data 폴더에 저장됨

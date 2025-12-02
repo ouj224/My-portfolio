@@ -12,12 +12,12 @@
       <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
-          <li><a href="about.html" class="active">ABOUT</a></li>
-          <li><a href="resume.html">RESUME</a></li>
-          <li><a href="project.html">PROJECT</a></li>
-          <li><a href="library.html">LIBRARY</a></li>
-          <li><a href="contact.html">CONTACT</a></li>
-          <li><a href="board.html">BOARD</a></li>
+          <li><a href="about.html" class="active"><img src="images/icon_about.png" alt="about" class="menu-icon"> ABOUT</a></li>
+          <li><a href="resume.html"><img src="images/icon_resume.png" alt="resume" class="menu-icon"> RESUME</a></li>
+          <li><a href="project.html"><img src="images/icon_project.png" alt="project" class="menu-icon"> PROJECT</a></li>
+          <li><a href="library.html"><img src="images/icon_library.png" alt="library" class="menu-icon"> LIBRARY</a></li>
+          <li><a href="contact.html"><img src="images/icon_contact.png" alt="contact" class="menu-icon"> CONTACT</a></li>
+          <li><a href="board.html"><img src="images/icon_board.png" alt="board" class="menu-icon"> BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -33,6 +33,12 @@
       <p style="color:#666;">나를 소개하는 글을 자유롭게 작성하세요.</p>
     </div>
 
+    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
+        <img src="images/icon_porfile.png" alt="증명사진" 
+             style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid #004098; background-color: #f0f0f0; margin-bottom: 15px;">
+        <p style="font-size: 0.9rem; color: #888;">* 프로필 이미지</p>
+    </div>
+
     <textarea id="aboutContent" class="resume-editor" placeholder="여기에 자기소개를 작성하세요... (예: 성장 과정, 성격의 장단점, 지원 동기 등)"></textarea>
     
     <div style="text-align: right; margin-top: 20px;">
@@ -46,7 +52,6 @@
 
   <script src="script.js"></script>
   <script>
-    // 페이지 로드 시 저장된 내용 불러오기 (서버 API 연동 필요, 여기선 로컬스토리지 예시)
     document.addEventListener("DOMContentLoaded", () => {
         const savedAbout = localStorage.getItem('myAbout');
         if(savedAbout) document.getElementById('aboutContent').value = savedAbout;
@@ -54,11 +59,9 @@
 
     function saveAbout() {
         const content = document.getElementById('aboutContent').value;
-        // 실제로는 fetch('/api/about', ...) 로 서버에 저장해야 함
         localStorage.setItem('myAbout', content); 
         alert('자기소개 내용이 저장되었습니다.');
     }
   </script>
-<script src="script.js"></script>
 </body>
 </html>

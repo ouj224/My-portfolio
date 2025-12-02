@@ -12,12 +12,12 @@
       <div class="logo"><a href="index.html">MY PORTFOLIO</a></div>
       <nav>
         <ul>
-          <li><a href="about.html">ABOUT</a></li>
-          <li><a href="resume.html">RESUME</a></li>
-          <li><a href="project.html">PROJECT</a></li>
-          <li><a href="library.html">LIBRARY</a></li>
-          <li><a href="contact.html">CONTACT</a></li>
-          <li><a href="board.html" class="active">BOARD</a></li>
+          <li><a href="about.html"><img src="images/icon_about.png" alt="about" class="menu-icon"> ABOUT</a></li>
+          <li><a href="resume.html"><img src="images/icon_resume.png" alt="resume" class="menu-icon"> RESUME</a></li>
+          <li><a href="project.html"><img src="images/icon_project.png" alt="project" class="menu-icon"> PROJECT</a></li>
+          <li><a href="library.html"><img src="images/icon_library.png" alt="library" class="menu-icon"> LIBRARY</a></li>
+          <li><a href="contact.html"><img src="images/icon_contact.png" alt="contact" class="menu-icon"> CONTACT</a></li>
+          <li><a href="board.html" class="active"><img src="images/icon_board.png" alt="board" class="menu-icon"> BOARD</a></li>
         </ul>
       </nav>
     </div>
@@ -58,15 +58,12 @@
   <div id="detailModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 700px;">
         <span class="close-modal" onclick="closeDetailModal()">&times;</span>
-        
         <h2 id="detailTitle" style="color:#004098; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:10px;"></h2>
         <div style="margin-bottom:20px; color:#888; font-size:0.9rem; display:flex; justify-content:space-between;">
             <span>작성자: <b id="detailAuthor"></b></span>
             <span id="detailDate"></span>
         </div>
-        
         <div id="detailContent" class="post-detail-content"></div>
-
         <div style="text-align:center; margin: 20px 0;">
             <button id="btnLike" class="like-btn" style="font-size:1rem; padding:8px 20px; margin-right:10px;">
                 <i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span>
@@ -75,15 +72,12 @@
                 <i class="fas fa-thumbs-down"></i> <span id="dislikeCount">0</span>
             </button>
         </div>
-
         <div id="ownerActions" style="text-align:right; display:none; margin-bottom:20px;">
             <button onclick="deleteCurrentPost()" class="btn-upload" style="background-color:#e74c3c; padding:5px 10px; font-size:0.9rem;">삭제하기</button>
         </div>
-
         <div class="comment-section">
             <h4>댓글 <span id="commentCount">0</span></h4>
             <div id="commentList" class="comment-list"></div>
-            
             <div class="comment-form">
                 <input type="text" id="commentInput" class="comment-input" placeholder="댓글을 입력하세요...">
                 <button onclick="submitComment()" class="btn-upload" style="padding: 8px 15px;">등록</button>
@@ -100,7 +94,7 @@
   <script>
     let currentUserId = null; 
     let currentPostId = null;
-    let allPosts = []; // 게시글 데이터 저장용
+    let allPosts = []; 
 
     document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/me').then(res => res.json()).then(data => {
@@ -111,7 +105,7 @@
 
     function loadPosts() {
         fetch('/api/posts').then(res => res.json()).then(posts => {
-            allPosts = posts; // 데이터 저장
+            allPosts = posts; 
             const tbody = document.getElementById('boardList');
             if(posts.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="padding:30px;">게시글이 없습니다.</td></tr>';
@@ -139,61 +133,42 @@
         });
     }
 
-    // 상세 모달 열기 (ID로 데이터 찾기)
     function openDetailModal(postId) {
         const post = allPosts.find(p => p._id === postId);
         if(!post) return;
-
         currentPostId = post._id;
-        
-        // 내용 채우기
         document.getElementById('detailTitle').innerText = post.title;
         document.getElementById('detailAuthor').innerText = post.authorName;
         document.getElementById('detailDate').innerText = new Date(post.createdAt).toLocaleString();
-        
-        // ★ 본문 내용 채우기 (여기가 중요합니다!)
         document.getElementById('detailContent').innerText = post.content || "내용이 없습니다.";
-
-        // 추천/비추천 수 채우기
         document.getElementById('likeCount').innerText = post.likes ? post.likes.length : 0;
         document.getElementById('dislikeCount').innerText = post.dislikes ? post.dislikes.length : 0;
-
-        // 버튼 클릭 이벤트 연결
         document.getElementById('btnLike').onclick = () => votePost('like');
         document.getElementById('btnDislike').onclick = () => votePost('dislike');
         
-        // 삭제 버튼 표시 여부
         if(currentUserId && parseInt(post.userId) === parseInt(currentUserId)) {
             document.getElementById('ownerActions').style.display = 'block';
         } else {
             document.getElementById('ownerActions').style.display = 'none';
         }
-
         renderComments(post.comments || []);
         document.getElementById('detailModal').classList.add('open');
     }
 
-    // 추천/비추천 요청
     function votePost(type) {
         fetch(`/api/posts/${currentPostId}/${type}`, { method: 'POST' })
-            .then(() => {
-                // 목록 다시 불러오고 모달 내용 갱신을 위해 닫았다가 다시 열거나, 데이터를 다시 fetch 해야 함
-                // 여기서는 간단히 로드 후 모달 닫기 방지 로직 (새로고침)
-                loadPostsAfterVote();
-            });
+            .then(() => { loadPostsAfterVote(); });
     }
 
-    // 투표 후 모달 내용만 갱신하는 함수
     function loadPostsAfterVote() {
         fetch('/api/posts').then(res => res.json()).then(posts => {
             allPosts = posts;
             const updatedPost = posts.find(p => p._id === currentPostId);
             if(updatedPost) {
-                // 카운트만 업데이트
                 document.getElementById('likeCount').innerText = updatedPost.likes ? updatedPost.likes.length : 0;
                 document.getElementById('dislikeCount').innerText = updatedPost.dislikes ? updatedPost.dislikes.length : 0;
             }
-            loadPosts(); // 뒤에 목록도 갱신
+            loadPosts(); 
         });
     }
 
@@ -219,8 +194,6 @@
         }).then(() => {
             document.getElementById('commentInput').value = '';
             alert('댓글 등록 완료!');
-            
-            // 데이터 갱신
             fetch('/api/posts').then(res => res.json()).then(posts => {
                 allPosts = posts;
                 const updatedPost = posts.find(p => p._id === currentPostId);
@@ -234,11 +207,8 @@
         if(confirm('정말 삭제하시겠습니까?')) {
             fetch(`/api/posts/${currentPostId}`, { method: 'DELETE' })
                 .then(res => {
-                    if(res.ok) {
-                        alert('삭제되었습니다.');
-                        closeDetailModal();
-                        loadPosts();
-                    } else { alert('실패'); }
+                    if(res.ok) { alert('삭제되었습니다.'); closeDetailModal(); loadPosts(); } 
+                    else { alert('실패'); }
                 });
         }
     }
@@ -251,10 +221,7 @@
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ title, content })
-        }).then(() => {
-            closeWriteModal();
-            loadPosts();
-        });
+        }).then(() => { closeWriteModal(); loadPosts(); });
     }
 
     function openWriteModal() { document.getElementById('writeModal').classList.add('open'); }
