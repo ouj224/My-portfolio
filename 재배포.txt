@@ -1,0 +1,10 @@
+#docker 및 kubernetes
+
+# 1. 
+docker build -t my-portfolio:v1 .
+
+# 2. 
+kubectl delete deployment my-portfolio
+
+# 3. 
+kubectl apply -f k8s/app.yaml

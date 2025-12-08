@@ -23,173 +23,154 @@
     </div>
   </header>
 
-  <div class="sub-banner">
-    <h2>PROJECT</h2>
-  </div>
+  <div class="sub-banner"><h2>PROJECT</h2></div>
 
   <div class="container">
-    <div class="content-header" id="list-top">
+    <div class="content-header">
       <h3>프로젝트 갤러리</h3>
-      <p style="color:#666; font-size:0.9rem; margin-top:5px;">
-        진행한 프로젝트의 결과물을 등록하고 확인하세요.
-      </p>
+      <button onclick="openWriteModal()" class="btn-upload"><i class="fas fa-plus"></i> 프로젝트 등록</button>
     </div>
-    
-    <div id="project-grid" class="project-grid"></div>
 
-    <hr style="margin: 40px 0; border:0; border-top:1px solid #eee;">
-
-    <div class="upload-box" id="form-area">
-      <h4 id="form-title"><i class="fas fa-pen"></i> 프로젝트 등록하기</h4>
-      <input type="hidden" id="edit-id">
-      
-      <div class="input-group">
-        <label for="p-image">파일 업로드 (이미지, PDF 등)</label>
-        <input type="file" id="p-image" accept="image/*,.pdf,.zip,.rar,.7z,.doc,.docx,.hwp">
-        <p id="file-info" style="font-size: 0.8rem; color: #888; margin-top: 5px;">* 업로드한 파일은 상세화면에서 다운로드할 수 있습니다.</p>
-      </div>
-      <div class="input-group">
-        <label for="p-title">프로젝트 제목</label>
-        <input type="text" id="p-title" placeholder="프로젝트 제목을 입력하세요">
-      </div>
-      <div class="input-group">
-        <label for="p-desc">설명</label>
-        <input type="text" id="p-desc" placeholder="프로젝트 설명을 입력하세요">
-      </div>
-      
-      <div style="display: flex; gap: 10px;">
-        <button onclick="handleProjectSubmit()" id="btn-submit" class="btn-upload">등록</button>
-        <button onclick="resetForm()" id="btn-cancel" class="btn-upload" style="background-color: #666; display: none;">취소</button>
-      </div>
-    </div>
+    <table class="board-table">
+        <thead>
+            <tr>
+                <th width="10%">No.</th>
+                <th width="60%">프로젝트명</th>
+                <th width="15%">작성자</th>
+                <th width="15%">날짜</th>
+            </tr>
+        </thead>
+        <tbody id="projectList"></tbody>
+    </table>
   </div>
 
-  <div id="project-modal" class="modal-overlay">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal()">&times;</span>
-      <div style="text-align: center;">
-        <div id="modal-img-area" style="margin-bottom: 20px; height: 200px; display: flex; align-items: center; justify-content: center; background: #f8f8f8; border-radius: 8px;"></div>
-        <h3 id="modal-title" style="color: #004098; font-size: 1.5rem; margin-bottom: 10px;">제목</h3>
-        <p id="modal-desc" style="color: #555; line-height: 1.6;">설명</p>
-        <a id="modal-download" href="#" class="btn-upload" style="display:inline-block; margin-top:15px; text-decoration:none;" download><i class="fas fa-download"></i> 다운로드</a>
-        <p id="modal-no-file" style="display:none; color:#999; margin-top:20px;">첨부된 파일이 없습니다.</p>
+  <div id="writeModal" class="modal-overlay">
+      <div class="modal-content">
+          <span class="close-modal" onclick="closeWriteModal()">&times;</span>
+          <h3 id="modalTitle">새 프로젝트 등록</h3>
+          <input type="text" id="postTitle" placeholder="프로젝트명" class="auth-input">
+          <textarea id="postContent" rows="8" placeholder="프로젝트 설명..." class="resume-editor" style="margin-top:10px;"></textarea>
+          <div style="margin-top:10px;">
+             <label style="font-weight:bold;">대표 이미지/파일:</label>
+             <input type="file" id="postFile" accept="image/*">
+          </div>
+          <button onclick="submitPost()" class="btn-upload" style="width:100%; margin-top:20px;">저장하기</button>
       </div>
+  </div>
+
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeDetailModal()">&times;</span>
+        <h2 id="detailTitle" style="color:#004098; border-bottom:1px solid #ddd; padding-bottom:10px;"></h2>
+        <div style="margin:10px 0; color:#888;">
+            작성자: <span id="detailAuthor"></span> | <span id="detailDate"></span>
+        </div>
+        
+        <div id="detailImageArea" class="detail-image-container" style="display:none;">
+            <img id="detailImage" src="" alt="프로젝트 이미지" class="detail-image">
+        </div>
+
+        <div id="detailContent" class="post-detail-content"></div>
+        <div id="ownerActions" style="text-align:right; display:none;">
+            <button onclick="openEditModal()" class="btn-upload" style="background-color:#f39c12; margin-right:5px;">수정</button>
+            <button onclick="deleteCurrentPost()" class="btn-upload" style="background-color:#e74c3c;">삭제</button>
+        </div>
     </div>
   </div>
 
   <footer>
-    <div class="footer-content">
-      <div class="footer-info"><p>Copyright © 2025 All Rights Reserved.</p></div>
-    </div>
+    <div class="footer-content"><p>Copyright © 2025 All Rights Reserved.</p></div>
   </footer>
 
   <script src="script.js"></script>
   <script>
-    let projectList = [
-      { id: 1, title: "객체지향 포트폴리오", desc: "HTML/CSS/JS 포트폴리오 사이트", type: 'web', file: null },
-      { id: 2, title: "Node.js API 서버", desc: "Express 프레임워크 활용", type: 'server', file: null },
-      { id: 3, title: "MongoDB 데이터베이스", desc: "NoSQL 데이터 모델링", type: 'db', file: null },
-      { id: 4, title: "반응형 웹 디자인", desc: "모바일/태블릿 대응 UI", type: 'design', file: null }
-    ];
-    let nextId = 5;
-    let editMode = false;
-    let currentEditId = null;
+    const API_ENDPOINT = '/api/projects'; 
+    let currentUserId = null; let currentPostId = null; let allPosts = []; let isEditing = false;
 
-    window.onload = function() { renderProjects(); };
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('/api/me').then(res => res.json()).then(data => { currentUserId = data.userId; loadPosts(); });
+    });
 
-    function renderProjects() {
-      const grid = document.getElementById('project-grid');
-      grid.innerHTML = '';
-      projectList.forEach(data => createCardDOM(data, grid));
+    function loadPosts() {
+        fetch(API_ENDPOINT).then(res => res.json()).then(posts => {
+            allPosts = posts;
+            const tbody = document.getElementById('projectList');
+            if(posts.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;">등록된 프로젝트가 없습니다.</td></tr>'; return; }
+            tbody.innerHTML = posts.map((post, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td style="text-align:left; padding-left:20px;">
+                        <span class="board-title-link" onclick="openDetailModal('${post._id}')">${post.title} ${post.fileName ? '🖼️' : ''}</span>
+                    </td>
+                    <td>${post.authorName}</td>
+                    <td>${new Date(post.createdAt).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        });
     }
 
-    function createCardDOM(data, parent) {
-      const card = document.createElement('div');
-      card.className = 'project-card';
-      let displayContent = '', modalIconHtml = '', fileUrl = '#';
-      if (data.file) {
-        fileUrl = URL.createObjectURL(data.file);
-        if (data.file.type.startsWith('image/')) {
-          displayContent = `<img src="${fileUrl}" alt="Img">`;
-          modalIconHtml = `<img src="${fileUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
+    function openDetailModal(postId) {
+        const post = allPosts.find(p => p._id === postId);
+        if(!post) return;
+        currentPostId = post._id;
+        document.getElementById('detailTitle').innerText = post.title;
+        document.getElementById('detailAuthor').innerText = post.authorName;
+        document.getElementById('detailDate').innerText = new Date(post.createdAt).toLocaleString();
+        document.getElementById('detailContent').innerText = post.content;
+        
+        const imgArea = document.getElementById('detailImageArea');
+        if (post.fileName) {
+            document.getElementById('detailImage').src = `/uploads/${post.fileName}`;
+            imgArea.style.display = 'block';
         } else {
-          displayContent = `<div style="background:#f8f9fa; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#004098;"><i class="fas fa-file-alt" style="font-size:3rem;"></i><span style="font-size:0.8rem; margin-top:5px;">${data.file.name}</span></div>`;
-          modalIconHtml = `<i class="fas fa-file-alt" style="font-size:5rem; color:#004098;"></i>`;
+            imgArea.style.display = 'none';
         }
-      } else {
-        let icon = 'fa-laptop-code';
-        if (data.type === 'server') icon = 'fa-server';
-        if (data.type === 'db') icon = 'fa-database';
-        displayContent = `<div style="background:#f0f7ff; height:100%; display:flex; align-items:center; justify-content:center; color:#004098;"><i class="fas ${icon}" style="font-size:3rem;"></i></div>`;
-        modalIconHtml = `<i class="fas ${icon}" style="font-size:5rem; color:#004098;"></i>`;
-        fileUrl = null;
-      }
-      card.innerHTML = `
-        <div class="img-wrapper">${displayContent}</div>
-        <div class="card-actions">
-          <div class="action-btn" onclick="startEdit(${data.id}); event.stopPropagation();" title="수정"><i class="fas fa-pen"></i></div>
-          <div class="action-btn delete" onclick="deleteProject(${data.id}); event.stopPropagation();" title="삭제"><i class="fas fa-trash"></i></div>
-        </div>
-        <div class="card-body">
-          <h5>${data.title}</h5>
-          <p class="card-desc-preview" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${data.desc}</p>
-        </div>
-      `;
-      card.onclick = () => openModal(data.title, data.desc, modalIconHtml, fileUrl, data.file ? data.file.name : '');
-      parent.prepend(card);
+        
+        document.getElementById('ownerActions').style.display = (currentUserId && parseInt(post.userId) === parseInt(currentUserId)) ? 'block' : 'none';
+        document.getElementById('detailModal').classList.add('open');
     }
 
-    function handleProjectSubmit() {
-      const title = document.getElementById('p-title').value;
-      const desc = document.getElementById('p-desc').value;
-      const fileInput = document.getElementById('p-image');
-      if (!title) { alert("제목을 입력하세요."); return; }
-      if (editMode) {
-        const target = projectList.find(p => p.id === currentEditId);
-        if (target) { target.title = title; target.desc = desc; if(fileInput.files.length) target.file = fileInput.files[0]; }
-        alert("수정되었습니다.");
-        resetForm(); 
-      } else {
-        projectList.push({ id: nextId++, title: title, desc: desc, file: fileInput.files[0] });
-        document.getElementById('p-title').value = '';
-        document.getElementById('p-desc').value = '';
-        document.getElementById('p-image').value = '';
-        renderProjects();
-      }
+    function openEditModal() {
+        const post = allPosts.find(p => p._id === currentPostId);
+        if (!post) return;
+        isEditing = true;
+        document.getElementById('modalTitle').innerText = "프로젝트 수정";
+        document.getElementById('postTitle').value = post.title;
+        document.getElementById('postContent').value = post.content;
+        closeDetailModal();
+        document.getElementById('writeModal').classList.add('open');
     }
 
-    function startEdit(id) {
-      const target = projectList.find(p => p.id === id);
-      if (!target) return;
-      editMode = true; currentEditId = id;
-      document.getElementById('p-title').value = target.title;
-      document.getElementById('p-desc').value = target.desc;
-      document.getElementById('file-info').innerText = "* 파일을 새로 업로드하면 기존 파일이 교체됩니다.";
-      document.getElementById('form-title').innerHTML = `<i class="fas fa-edit"></i> 프로젝트 수정하기`;
-      document.getElementById('btn-submit').innerText = "수정 완료";
-      document.getElementById('btn-cancel').style.display = "inline-block";
-      document.getElementById('form-area').scrollIntoView({ behavior: 'smooth' });
+    function openWriteModal() {
+        isEditing = false;
+        document.getElementById('modalTitle').innerText = "새 프로젝트 등록";
+        document.getElementById('postTitle').value = "";
+        document.getElementById('postContent').value = "";
+        document.getElementById('postFile').value = "";
+        document.getElementById('writeModal').classList.add('open');
     }
 
-    function deleteProject(id) { if(confirm("정말 삭제하시겠습니까?")) { projectList = projectList.filter(p => p.id !== id); renderProjects(); } }
-    function resetForm() {
-      editMode = false; currentEditId = null;
-      document.getElementById('p-title').value=''; document.getElementById('p-desc').value=''; document.getElementById('p-image').value='';
-      document.getElementById('file-info').innerText = "* 업로드한 파일은 상세화면에서 다운로드할 수 있습니다.";
-      document.getElementById('form-title').innerHTML = `<i class="fas fa-pen"></i> 프로젝트 등록하기`;
-      document.getElementById('btn-submit').innerText = "등록"; document.getElementById('btn-cancel').style.display = "none";
-      document.getElementById('list-top').scrollIntoView({ behavior: 'smooth' });
-      renderProjects();
+    function submitPost() {
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        const fileInput = document.getElementById('postFile');
+
+        if(!title) { alert('제목 입력!'); return; }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        if (fileInput.files[0]) formData.append('file', fileInput.files[0]);
+
+        const url = isEditing ? `${API_ENDPOINT}/${currentPostId}` : API_ENDPOINT;
+        const method = isEditing ? 'PUT' : 'POST';
+
+        fetch(url, { method: method, body: formData }).then(() => { closeWriteModal(); loadPosts(); });
     }
-    function openModal(t,d,i,f,fn) {
-      document.getElementById('modal-title').innerText=t; document.getElementById('modal-desc').innerText=d; document.getElementById('modal-img-area').innerHTML=i;
-      const db = document.getElementById('modal-download');
-      if(f && f !== '#'){ db.href=f; db.download=fn; db.style.display='inline-block'; document.getElementById('modal-no-file').style.display='none'; }
-      else { db.style.display='none'; document.getElementById('modal-no-file').style.display='block'; }
-      document.getElementById('project-modal').classList.add('open');
-    }
-    function closeModal() { document.getElementById('project-modal').classList.remove('open'); }
-    window.onclick = function(e) { if(e.target==document.getElementById('project-modal')) closeModal(); }
+
+    function deleteCurrentPost() { if(confirm('삭제?')) fetch(`${API_ENDPOINT}/${currentPostId}`, { method: 'DELETE' }).then(() => { closeDetailModal(); loadPosts(); }); }
+    function closeWriteModal() { document.getElementById('writeModal').classList.remove('open'); }
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
   </script>
 </body>
 </html>

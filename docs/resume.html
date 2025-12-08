@@ -23,20 +23,61 @@
     </div>
   </header>
 
-  <div class="sub-banner">
-    <h2>RESUME</h2>
-  </div>
+  <div class="sub-banner"><h2>RESUME</h2></div>
 
   <div class="container">
     <div class="content-header">
-      <h3>이력서 & 기술 기술서</h3>
-      <p style="color:#666;">보유 기술 스택과 경력 사항을 상세히 기술하세요.</p>
+      <h3>이력서 관리</h3>
+      <button onclick="openWriteModal()" class="btn-upload"><i class="fas fa-pen"></i> 이력서 등록</button>
     </div>
-    
-    <textarea id="resumeContent" class="resume-editor" placeholder="[보유 기술]&#13;&#10;- Language: JavaScript, Python&#13;&#10;- Frontend: HTML, CSS, React&#13;&#10;- Backend: Node.js, Express, MongoDB&#13;&#10;&#13;&#10;[경력 사항]&#13;&#10;..."></textarea>
-    
-    <div style="text-align: right; margin-top: 20px;">
-        <button onclick="saveResume()" class="btn-upload">이력서 저장하기</button>
+
+    <table class="board-table">
+        <thead>
+            <tr>
+                <th width="10%">No.</th>
+                <th width="60%">제목</th>
+                <th width="15%">작성자</th>
+                <th width="15%">날짜</th>
+            </tr>
+        </thead>
+        <tbody id="resumeList"></tbody>
+    </table>
+  </div>
+
+  <div id="writeModal" class="modal-overlay">
+      <div class="modal-content">
+          <span class="close-modal" onclick="closeWriteModal()">&times;</span>
+          <h3 id="modalTitle">이력서 작성</h3>
+          <input type="text" id="postTitle" placeholder="제목 (예: 2025년 상반기 이력서)" class="auth-input">
+          <textarea id="postContent" rows="10" placeholder="경력 및 기술 내용을 작성하세요..." class="resume-editor" style="margin-top:10px;"></textarea>
+          <div style="margin-top:10px;">
+             <label style="font-weight:bold;">파일 첨부 (이미지/PDF):</label>
+             <input type="file" id="postFile">
+          </div>
+          <button onclick="submitPost()" class="btn-upload" style="width:100%; margin-top:20px;">저장하기</button>
+      </div>
+  </div>
+
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeDetailModal()">&times;</span>
+        <h2 id="detailTitle" style="color:#004098; border-bottom:1px solid #ddd; padding-bottom:10px;"></h2>
+        <div style="margin:10px 0; color:#888; font-size:0.9rem;">
+            작성자: <span id="detailAuthor"></span> | <span id="detailDate"></span>
+        </div>
+        
+        <div id="detailImageArea" class="detail-image-container" style="display:none;">
+            <img id="detailImage" src="" alt="첨부 이미지" class="detail-image">
+        </div>
+        
+        <div id="detailFile" style="margin-bottom:10px; font-size:0.9rem; color:#004098;"></div>
+        
+        <div id="detailContent" class="post-detail-content"></div>
+        
+        <div id="ownerActions" style="text-align:right; display:none; margin-top:10px;">
+            <button onclick="openEditModal()" class="btn-upload" style="background-color:#f39c12; margin-right:5px;">수정</button>
+            <button onclick="deleteCurrentPost()" class="btn-upload" style="background-color:#e74c3c;">삭제</button>
+        </div>
     </div>
   </div>
 
@@ -46,18 +87,109 @@
 
   <script src="script.js"></script>
   <script>
-    fetch('/api/resume').then(res => res.json()).then(data => {
-        document.getElementById('resumeContent').value = data.content || '';
+    const API_ENDPOINT = '/api/resumes'; 
+    let currentUserId = null; 
+    let currentPostId = null;
+    let allPosts = [];
+    let isEditing = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('/api/me').then(res => res.json()).then(data => { currentUserId = data.userId; loadPosts(); });
     });
 
-    function saveResume() {
-        const content = document.getElementById('resumeContent').value;
-        fetch('/api/resume', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
-        }).then(() => alert('이력서가 저장되었습니다.'));
+    function loadPosts() {
+        fetch(API_ENDPOINT).then(res => res.json()).then(posts => {
+            allPosts = posts;
+            const tbody = document.getElementById('resumeList');
+            if(posts.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;">등록된 이력서가 없습니다.</td></tr>'; return; }
+            tbody.innerHTML = posts.map((post, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td style="text-align:left; padding-left:20px;">
+                        <span class="board-title-link" onclick="openDetailModal('${post._id}')">${post.title} ${post.fileName ? '📎' : ''}</span>
+                    </td>
+                    <td>${post.authorName}</td>
+                    <td>${new Date(post.createdAt).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        });
     }
+
+    function openDetailModal(postId) {
+        const post = allPosts.find(p => p._id === postId);
+        if(!post) return;
+        currentPostId = post._id;
+        document.getElementById('detailTitle').innerText = post.title;
+        document.getElementById('detailAuthor').innerText = post.authorName;
+        document.getElementById('detailDate').innerText = new Date(post.createdAt).toLocaleString();
+        document.getElementById('detailContent').innerText = post.content || "";
+        
+        // 이미지 처리
+        const imgArea = document.getElementById('detailImageArea');
+        if (post.fileName && /\.(jpg|jpeg|png|gif)$/i.test(post.fileName)) {
+            document.getElementById('detailImage').src = `/uploads/${post.fileName}`;
+            imgArea.style.display = 'block';
+        } else {
+            imgArea.style.display = 'none';
+        }
+        
+        document.getElementById('detailFile').innerText = post.fileName ? `첨부파일: ${post.originalName || post.fileName}` : '';
+        
+        document.getElementById('ownerActions').style.display = (currentUserId && parseInt(post.userId) === parseInt(currentUserId)) ? 'block' : 'none';
+        document.getElementById('detailModal').classList.add('open');
+    }
+
+    function openEditModal() {
+        const post = allPosts.find(p => p._id === currentPostId);
+        if (!post) return;
+        isEditing = true;
+        document.getElementById('modalTitle').innerText = "이력서 수정";
+        document.getElementById('postTitle').value = post.title;
+        document.getElementById('postContent').value = post.content;
+        closeDetailModal();
+        document.getElementById('writeModal').classList.add('open');
+    }
+
+    function openWriteModal() {
+        isEditing = false;
+        document.getElementById('modalTitle').innerText = "이력서 작성";
+        document.getElementById('postTitle').value = "";
+        document.getElementById('postContent').value = "";
+        document.getElementById('postFile').value = "";
+        document.getElementById('writeModal').classList.add('open');
+    }
+
+    function submitPost() {
+        const title = document.getElementById('postTitle').value;
+        const content = document.getElementById('postContent').value;
+        const fileInput = document.getElementById('postFile');
+
+        if(!title) { alert('제목을 입력하세요.'); return; }
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        if (fileInput.files[0]) formData.append('file', fileInput.files[0]);
+
+        const url = isEditing ? `${API_ENDPOINT}/${currentPostId}` : API_ENDPOINT;
+        const method = isEditing ? 'PUT' : 'POST';
+
+        fetch(url, { method: method, body: formData }).then(res => res.json()).then(data => {
+            if(data.message) { 
+                alert(isEditing ? '수정되었습니다.' : '저장되었습니다.');
+                closeWriteModal(); loadPosts(); 
+            } else { alert('오류 발생'); }
+        });
+    }
+
+    function deleteCurrentPost() {
+        if(confirm('삭제하시겠습니까?')) {
+            fetch(`${API_ENDPOINT}/${currentPostId}`, { method: 'DELETE' }).then(() => { closeDetailModal(); loadPosts(); });
+        }
+    }
+
+    function closeWriteModal() { document.getElementById('writeModal').classList.remove('open'); }
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
   </script>
 </body>
 </html>

@@ -48,33 +48,43 @@
   <div id="writeModal" class="modal-overlay">
       <div class="modal-content">
           <span class="close-modal" onclick="closeWriteModal()">&times;</span>
-          <h3>새 게시글 작성</h3>
+          <h3 id="modalTitle">새 게시글 작성</h3>
           <input type="text" id="postTitle" placeholder="제목" class="auth-input">
           <textarea id="postContent" rows="8" placeholder="내용을 입력하세요" class="resume-editor" style="min-height:200px; margin-top:10px;"></textarea>
-          <button onclick="submitPost()" class="btn-upload" style="width:100%; margin-top:10px;">등록하기</button>
+          <div style="margin-top:10px;">
+             <label style="font-weight:bold;">이미지 첨부:</label>
+             <input type="file" id="postFile" accept="image/*">
+          </div>
+          <button onclick="submitPost()" class="btn-upload" style="width:100%; margin-top:10px;">저장하기</button>
       </div>
   </div>
 
   <div id="detailModal" class="modal-overlay">
     <div class="modal-content" style="max-width: 700px;">
         <span class="close-modal" onclick="closeDetailModal()">&times;</span>
+        
         <h2 id="detailTitle" style="color:#004098; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:10px;"></h2>
         <div style="margin-bottom:20px; color:#888; font-size:0.9rem; display:flex; justify-content:space-between;">
             <span>작성자: <b id="detailAuthor"></b></span>
             <span id="detailDate"></span>
         </div>
+        
+        <div id="detailImageArea" class="detail-image-container" style="display:none;">
+            <img id="detailImage" src="" alt="첨부 이미지" class="detail-image">
+        </div>
+
         <div id="detailContent" class="post-detail-content"></div>
+
         <div style="text-align:center; margin: 20px 0;">
-            <button id="btnLike" class="like-btn" style="font-size:1rem; padding:8px 20px; margin-right:10px;">
-                <i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span>
-            </button>
-            <button id="btnDislike" class="dislike-btn" style="font-size:1rem; padding:8px 20px;">
-                <i class="fas fa-thumbs-down"></i> <span id="dislikeCount">0</span>
-            </button>
+            <button id="btnLike" class="like-btn" style="padding:8px 20px; margin-right:10px;"><i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span></button>
+            <button id="btnDislike" class="dislike-btn" style="padding:8px 20px;"><i class="fas fa-thumbs-down"></i> <span id="dislikeCount">0</span></button>
         </div>
+
         <div id="ownerActions" style="text-align:right; display:none; margin-bottom:20px;">
-            <button onclick="deleteCurrentPost()" class="btn-upload" style="background-color:#e74c3c; padding:5px 10px; font-size:0.9rem;">삭제하기</button>
+            <button onclick="openEditModal()" class="btn-upload" style="background-color:#f39c12; margin-right:5px;">수정</button>
+            <button onclick="deleteCurrentPost()" class="btn-upload" style="background-color:#e74c3c;">삭제</button>
         </div>
+
         <div class="comment-section">
             <h4>댓글 <span id="commentCount">0</span></h4>
             <div id="commentList" class="comment-list"></div>
@@ -92,41 +102,35 @@
 
   <script src="script.js"></script>
   <script>
+    const API_ENDPOINT = '/api/posts';
     let currentUserId = null; 
     let currentPostId = null;
-    let allPosts = []; 
+    let allPosts = [];
+    let isEditing = false;
 
     document.addEventListener("DOMContentLoaded", () => {
-        fetch('/api/me').then(res => res.json()).then(data => {
-            currentUserId = data.userId;
-            loadPosts();
-        });
+        fetch('/api/me').then(res => res.json()).then(data => { currentUserId = data.userId; loadPosts(); });
     });
 
     function loadPosts() {
-        fetch('/api/posts').then(res => res.json()).then(posts => {
-            allPosts = posts; 
+        fetch(API_ENDPOINT).then(res => res.json()).then(posts => {
+            allPosts = posts;
             const tbody = document.getElementById('boardList');
-            if(posts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="padding:30px;">게시글이 없습니다.</td></tr>';
-                return;
-            }
+            if(posts.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="padding:30px;">게시글이 없습니다.</td></tr>'; return; }
             tbody.innerHTML = posts.map((post, idx) => `
                 <tr>
                     <td>${idx + 1}</td>
                     <td style="text-align:left; padding-left:20px;">
                         <span class="board-title-link" onclick="openDetailModal('${post._id}')">
-                            ${post.title} 
+                            ${post.title} ${post.fileName ? '🖼️' : ''}
                             <span style="font-size:0.8rem; color:#888;">[${post.comments ? post.comments.length : 0}]</span>
                         </span>
                     </td>
                     <td>${post.authorName}</td>
                     <td>${new Date(post.createdAt).toLocaleDateString()}</td>
                     <td>
-                        <div class="vote-container">
-                            <span style="color:#3498db"><i class="fas fa-thumbs-up"></i> ${post.likes ? post.likes.length : 0}</span>
-                            <span style="color:#e74c3c"><i class="fas fa-thumbs-down"></i> ${post.dislikes ? post.dislikes.length : 0}</span>
-                        </div>
+                        <span style="color:#3498db; margin-right:5px;"><i class="fas fa-thumbs-up"></i> ${post.likes ? post.likes.length : 0}</span>
+                        <span style="color:#e74c3c"><i class="fas fa-thumbs-down"></i> ${post.dislikes ? post.dislikes.length : 0}</span>
                     </td>
                 </tr>
             `).join('');
@@ -137,94 +141,149 @@
         const post = allPosts.find(p => p._id === postId);
         if(!post) return;
         currentPostId = post._id;
+        
         document.getElementById('detailTitle').innerText = post.title;
         document.getElementById('detailAuthor').innerText = post.authorName;
         document.getElementById('detailDate').innerText = new Date(post.createdAt).toLocaleString();
-        document.getElementById('detailContent').innerText = post.content || "내용이 없습니다.";
+        document.getElementById('detailContent').innerText = post.content || "";
         document.getElementById('likeCount').innerText = post.likes ? post.likes.length : 0;
         document.getElementById('dislikeCount').innerText = post.dislikes ? post.dislikes.length : 0;
+
+        const imgArea = document.getElementById('detailImageArea');
+        if (post.fileName) {
+            document.getElementById('detailImage').src = `/uploads/${post.fileName}`;
+            imgArea.style.display = 'block';
+        } else {
+            imgArea.style.display = 'none';
+        }
+
         document.getElementById('btnLike').onclick = () => votePost('like');
         document.getElementById('btnDislike').onclick = () => votePost('dislike');
         
-        if(currentUserId && parseInt(post.userId) === parseInt(currentUserId)) {
-            document.getElementById('ownerActions').style.display = 'block';
-        } else {
-            document.getElementById('ownerActions').style.display = 'none';
-        }
+        document.getElementById('ownerActions').style.display = (currentUserId && parseInt(post.userId) === parseInt(currentUserId)) ? 'block' : 'none';
         renderComments(post.comments || []);
         document.getElementById('detailModal').classList.add('open');
     }
 
-    function votePost(type) {
-        fetch(`/api/posts/${currentPostId}/${type}`, { method: 'POST' })
-            .then(() => { loadPostsAfterVote(); });
-    }
-
-    function loadPostsAfterVote() {
-        fetch('/api/posts').then(res => res.json()).then(posts => {
-            allPosts = posts;
-            const updatedPost = posts.find(p => p._id === currentPostId);
-            if(updatedPost) {
-                document.getElementById('likeCount').innerText = updatedPost.likes ? updatedPost.likes.length : 0;
-                document.getElementById('dislikeCount').innerText = updatedPost.dislikes ? updatedPost.dislikes.length : 0;
-            }
-            loadPosts(); 
-        });
-    }
-
+    // 댓글 렌더링 (수정/삭제 버튼 포함)
     function renderComments(comments) {
         document.getElementById('commentCount').innerText = comments.length;
         const list = document.getElementById('commentList');
-        list.innerHTML = comments.map(c => `
-            <div class="comment-item">
-                <span class="comment-author">${c.authorName}</span>
-                <span class="comment-date">${new Date(c.createdAt).toLocaleString()}</span>
-                <div style="margin-top:5px;">${c.content}</div>
-            </div>
-        `).join('');
+        
+        list.innerHTML = comments.map(c => {
+            // 본인 댓글인지 확인
+            const isMyComment = currentUserId && parseInt(c.userId) === parseInt(currentUserId);
+            
+            return `
+            <div class="comment-item" id="comment-${c._id}">
+                <div class="comment-meta">
+                    <span class="comment-author">${c.authorName}</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="comment-date">${new Date(c.createdAt).toLocaleString()}</span>
+                        ${isMyComment ? `
+                            <div class="comment-actions">
+                                <button onclick="enableEditComment('${c._id}', '${c.content.replace(/'/g, "\\'")}')" class="btn-sm">수정</button>
+                                <button onclick="deleteComment('${c._id}')" class="btn-sm delete">삭제</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="comment-content" id="content-${c._id}">${c.content}</div>
+                <div class="edit-comment-area" id="edit-form-${c._id}" style="display:none;">
+                    <input type="text" id="edit-input-${c._id}" class="edit-comment-input">
+                    <button onclick="submitEditComment('${c._id}')" class="btn-sm">저장</button>
+                    <button onclick="cancelEditComment('${c._id}')" class="btn-sm">취소</button>
+                </div>
+            </div>`;
+        }).join('');
     }
 
     function submitComment() {
         const content = document.getElementById('commentInput').value;
         if(!content) return;
-        fetch(`/api/posts/${currentPostId}/comments`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ content })
-        }).then(() => {
+        fetch(`${API_ENDPOINT}/${currentPostId}/comments`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ content }) }).then(() => {
             document.getElementById('commentInput').value = '';
-            alert('댓글 등록 완료!');
-            fetch('/api/posts').then(res => res.json()).then(posts => {
-                allPosts = posts;
-                const updatedPost = posts.find(p => p._id === currentPostId);
-                renderComments(updatedPost.comments || []);
-                loadPosts();
-            });
+            refreshComments();
         });
     }
 
-    function deleteCurrentPost() {
-        if(confirm('정말 삭제하시겠습니까?')) {
-            fetch(`/api/posts/${currentPostId}`, { method: 'DELETE' })
-                .then(res => {
-                    if(res.ok) { alert('삭제되었습니다.'); closeDetailModal(); loadPosts(); } 
-                    else { alert('실패'); }
-                });
-        }
+    // 댓글 삭제
+    function deleteComment(commentId) {
+        if(!confirm('댓글을 삭제하시겠습니까?')) return;
+        fetch(`${API_ENDPOINT}/${currentPostId}/comments/${commentId}`, { method: 'DELETE' })
+            .then(() => refreshComments());
     }
 
+    // 댓글 수정 모드 활성화
+    function enableEditComment(commentId, oldContent) {
+        document.getElementById(`content-${commentId}`).style.display = 'none';
+        document.getElementById(`edit-form-${commentId}`).style.display = 'flex';
+        document.getElementById(`edit-input-${commentId}`).value = oldContent;
+    }
+
+    // 댓글 수정 취소
+    function cancelEditComment(commentId) {
+        document.getElementById(`content-${commentId}`).style.display = 'block';
+        document.getElementById(`edit-form-${commentId}`).style.display = 'none';
+    }
+
+    // 댓글 수정 제출
+    function submitEditComment(commentId) {
+        const newContent = document.getElementById(`edit-input-${commentId}`).value;
+        if(!newContent) return;
+        
+        fetch(`${API_ENDPOINT}/${currentPostId}/comments/${commentId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ content: newContent })
+        }).then(() => refreshComments());
+    }
+
+    // 댓글 목록 새로고침 헬퍼
+    function refreshComments() {
+        fetch(API_ENDPOINT).then(res => res.json()).then(posts => {
+            allPosts = posts;
+            const updatedPost = posts.find(p => p._id === currentPostId);
+            renderComments(updatedPost.comments || []);
+            loadPosts(); // 목록 카운트 갱신용
+        });
+    }
+
+    // (기존 게시글 기능들 - 수정/삭제/추천 등)
+    function openEditModal() {
+        const post = allPosts.find(p => p._id === currentPostId);
+        if (!post) return;
+        isEditing = true;
+        document.getElementById('modalTitle').innerText = "게시글 수정";
+        document.getElementById('postTitle').value = post.title;
+        document.getElementById('postContent').value = post.content;
+        closeDetailModal();
+        document.getElementById('writeModal').classList.add('open');
+    }
+    function openWriteModal() {
+        isEditing = false;
+        document.getElementById('modalTitle').innerText = "새 게시글 작성";
+        document.getElementById('postTitle').value = "";
+        document.getElementById('postContent').value = "";
+        document.getElementById('postFile').value = "";
+        document.getElementById('writeModal').classList.add('open');
+    }
     function submitPost() {
         const title = document.getElementById('postTitle').value;
         const content = document.getElementById('postContent').value;
-        if(!title || !content) { alert('내용 입력!'); return; }
-        fetch('/api/posts', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ title, content })
-        }).then(() => { closeWriteModal(); loadPosts(); });
+        const fileInput = document.getElementById('postFile');
+        if(!title) { alert('내용을 입력하세요.'); return; }
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        if (fileInput.files[0]) formData.append('file', fileInput.files[0]);
+        const url = isEditing ? `${API_ENDPOINT}/${currentPostId}` : API_ENDPOINT;
+        const method = isEditing ? 'PUT' : 'POST';
+        fetch(url, { method: method, body: formData }).then(() => { closeWriteModal(); loadPosts(); });
     }
-
-    function openWriteModal() { document.getElementById('writeModal').classList.add('open'); }
+    function deleteCurrentPost() { if(confirm('삭제하시겠습니까?')) fetch(`${API_ENDPOINT}/${currentPostId}`, { method: 'DELETE' }).then(() => { closeDetailModal(); loadPosts(); }); }
+    function votePost(type) { fetch(`${API_ENDPOINT}/${currentPostId}/${type}`, { method: 'POST' }).then(() => { fetch(API_ENDPOINT).then(res => res.json()).then(posts => { allPosts=posts; const updated=posts.find(p=>p._id===currentPostId); document.getElementById('likeCount').innerText=updated.likes.length; document.getElementById('dislikeCount').innerText=updated.dislikes.length; loadPosts(); }); }); }
+    
     function closeWriteModal() { document.getElementById('writeModal').classList.remove('open'); }
     function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
   </script>

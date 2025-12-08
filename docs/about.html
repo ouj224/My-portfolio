@@ -23,23 +23,24 @@
     </div>
   </header>
 
-  <div class="sub-banner">
-    <h2>ABOUT ME</h2>
-  </div>
+  <div class="sub-banner"><h2>ABOUT ME</h2></div>
 
   <div class="container">
     <div class="content-header">
-      <h3>자기소개서 작성</h3>
-      <p style="color:#666;">나를 소개하는 글을 자유롭게 작성하세요.</p>
+      <h3>자기소개서</h3>
+      <p style="color:#666;">프로필 사진을 클릭하여 변경할 수 있습니다.</p>
     </div>
 
     <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 30px;">
-        <img src="images/icon_porfile.png" alt="증명사진" 
-             style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid #004098; background-color: #f0f0f0; margin-bottom: 15px;">
-        <p style="font-size: 0.9rem; color: #888;">* 프로필 이미지</p>
+        <label for="profileInput" style="cursor: pointer;" title="사진 변경하려면 클릭">
+            <img id="profileImg" src="images/icon_porfile.png" alt="증명사진" 
+                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid #004098; background-color: #f0f0f0;">
+        </label>
+        <input type="file" id="profileInput" accept="image/*" style="display: none;" onchange="changeProfile(this)">
+        <p style="font-size: 0.9rem; color: #888; margin-top: 10px;">* 클릭하여 사진 변경</p>
     </div>
 
-    <textarea id="aboutContent" class="resume-editor" placeholder="여기에 자기소개를 작성하세요... (예: 성장 과정, 성격의 장단점, 지원 동기 등)"></textarea>
+    <textarea id="aboutContent" class="resume-editor" placeholder="여기에 자기소개를 작성하세요..."></textarea>
     
     <div style="text-align: right; margin-top: 20px;">
         <button onclick="saveAbout()" class="btn-upload">내용 저장하기</button>
@@ -53,14 +54,29 @@
   <script src="script.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // 내용 불러오기
         const savedAbout = localStorage.getItem('myAbout');
         if(savedAbout) document.getElementById('aboutContent').value = savedAbout;
+        // 사진 불러오기
+        const savedProfile = localStorage.getItem('myProfileImg');
+        if(savedProfile) document.getElementById('profileImg').src = savedProfile;
     });
 
     function saveAbout() {
         const content = document.getElementById('aboutContent').value;
         localStorage.setItem('myAbout', content); 
         alert('자기소개 내용이 저장되었습니다.');
+    }
+
+    function changeProfile(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImg').src = e.target.result;
+                localStorage.setItem('myProfileImg', e.target.result); // Base64로 로컬저장
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
   </script>
 </body>
