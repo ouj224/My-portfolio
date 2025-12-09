@@ -1,0 +1,5 @@
+# 서버 실행
+kubectl apply -f k8s/app.yaml
+
+# 서버 종료
+kubectl delete -f k8s/

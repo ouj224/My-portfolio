@@ -1,18 +1,28 @@
-# 1. Node.js 18버전 이미지를 기반으로 생성
-FROM node:18
+# 1. Node.js 20 버전 이미지 사용 (Vite 최신 버전 호환)
+FROM node:20
 
-# 2. 컨테이너 내부 작업 디렉토리 설정
+# 2. 작업 디렉토리 설정
 WORKDIR /usr/src/app
 
-# 3. 패키지 설정 파일 복사 및 라이브러리 설치
+# --- Backend 의존성 설치 ---
 COPY package*.json ./
 RUN npm install
 
-# 4. 나머지 모든 소스 코드 복사
-COPY . .
+# --- Frontend (React) 빌드 ---
+# client 폴더 복사
+COPY client ./client
+# 작업 위치를 client로 변경하여 빌드 진행
+WORKDIR /usr/src/app/client
+RUN npm install
+RUN npm run build
 
-# 5. 서버가 사용하는 3000번 포트 개방 알림
+# --- 다시 루트(서버) 위치로 복귀 ---
+WORKDIR /usr/src/app
+
+# 3. 소스 코드 복사
+COPY backend ./backend
+COPY docs ./docs
+
+# 4. 포트 및 실행
 EXPOSE 3000
-
-# 6. 서버 실행 명령어
 CMD [ "node", "backend/server.js" ]
